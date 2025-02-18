@@ -1,0 +1,2958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <link rel="manifest" href="manifest.json"/>
+  <title>生姜经营计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 10px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: none;
+    }
+    .header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      position: relative;
+      gap: 10px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin: 0;
+      font-size: 18px;
+      flex: 1;
+    }
+    .input-section {
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #34495e;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      height: 36px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .explanation {
+      margin: 10px 0;
+      padding: 10px;
+      background: #ecf0f1;
+      border-radius: 6px;
+      color: #7f8c8d;
+      font-size: 13px;
+      display: block;
+      opacity: 1 !important;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .result-item {
+      margin: 8px 0;
+      padding: 8px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .result-item strong {
+      font-weight: 600;
+      color: #2c3e50;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .hidden {
+      display: none;
+    }
+    .radio-group {
+      margin: 0;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      font-weight: normal;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 8px 0;
+    }
+    .result-section {
+      margin-top: 15px;
+      padding: 10px;
+      background: #ecf0f1;
+      border-radius: 6px;
+    }
+    .result-section h4 {
+      margin: 0 0 8px;
+      color: #2c3e50;
+      font-size: 15px;
+    }
+    .hint {
+      color: #7f8c8d;
+      font-size: 12px;
+      margin-left: 8px;
+      font-weight: normal;
+      display: inline-block;
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 8px;
+        margin: 0;
+        box-shadow: none;
+      }
+      h1 {
+        font-size: 16px;
+        margin: 0;
+        text-align: center;
+      }
+      .input-section {
+        margin-bottom: 15px;
+        padding: 12px;
+      }
+      input, select {
+        padding: 8px;
+        font-size: 14px;
+      }
+      button {
+        padding: 10px;
+        font-size: 15px;
+      }
+      .header {
+        padding: 0 5px;
+      }
+      .control-buttons {
+        gap: 8px;
+      }
+      .control-btn {
+        height: 32px;
+        padding: 0 10px;
+        font-size: 13px;
+        width: 70px;
+      }
+      .control-btn .btn-icon {
+        font-size: 16px;
+        margin-right: 4px;
+      }
+      .result-item {
+        padding: 8px;
+        font-size: 13px;
+      }
+      .formula-hint {
+        font-size: 12px;
+        margin-left: 8px;
+        padding: 4px 6px;
+      }
+      .button-group {
+        gap: 6px;
+      }
+      #calculate-btn, #copy-btn {
+        height: 40px;
+        font-size: 14px;
+      }
+      .copy-success {
+        font-size: 13px;
+        padding: 8px 16px;
+      }
+    }
+    /* 添加切换按钮样式 */
+    .mode-toggle {
+      position: static;
+      margin-left: 20px;
+    }
+    .mode-toggle button {
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #f0f0f0;
+      color: #333;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+    }
+
+    /* 公式说明样式 */
+    .formula-hint {
+      color: #2ecc71;
+      font-size: 0.85em;
+      margin: 3px 0 0 5px;
+      padding-left: 8px;
+      border-left: 3px solid #3498db;
+    }
+    
+    /* 按钮状态指示 */
+    .active-mode {
+      background: #3498db !important;
+      color: white !important;
+    }
+
+    /* 增强说明样式 */
+    .detail-hint {
+      color: #3498db;
+      font-size: 0.9em;
+      margin: 5px 0 0 10px;
+      padding: 4px 8px;
+      background: #f0f8ff;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* 优化公式显示 */
+    .formula-hint {
+      background: #f8fff0;
+      padding: 6px 10px;
+      margin: 5px 0 0 15px;
+      border-left: 3px solid #2ecc71;
+    }
+
+    .detail-mode .explanation {
+      display: none;
+    }
+
+    /* 修复样式冲突 */
+    .explanation {
+      opacity: 1 !important;
+    }
+
+    /* 添加闪烁动画 */
+    @keyframes blink {
+      50% { opacity: 0.5; }
+    }
+    .blink {
+      animation: blink 1s ease-in-out infinite;
+      color: #e74c3c;
+      margin-left: 5px;
+    }
+
+    /* 强制覆盖公式说明的显示 */
+    .formula-hint {
+      display: none;
+    }
+    .detail-mode .formula-hint {
+      display: block;
+    }
+
+    /* 添加设置面板样式 */
+    .settings-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.2);
+      z-index: 1000;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .settings-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #2c3e50;
+    }
+
+    .settings-tabs {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      background: #f8f9fa;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+
+    .settings-section {
+      display: none;
+      padding: 15px 0;
+    }
+
+    .settings-section.active {
+      display: block;
+    }
+
+    .settings-section h4 {
+      margin: 0 0 15px;
+      color: #2c3e50;
+      font-size: 16px;
+    }
+
+    .setting-item {
+      margin-bottom: 15px;
+    }
+
+    .setting-item label {
+      display: block;
+      margin-bottom: 8px;
+      color: #34495e;
+      font-size: 14px;
+    }
+
+    .setting-item input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .settings-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .settings-btn {
+      padding: 8px 15px !important;
+      background: #f8f9fa !important;
+      border: 1px solid #ddd !important;
+      border-radius: 20px !important;
+      transition: all 0.3s ease;
+    }
+
+    .settings-btn:hover {
+      background: #e9ecef !important;
+      transform: scale(1.05);
+    }
+
+    .settings-footer button {
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: #3498db;
+      color: white;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    .settings-footer button:hover {
+      background: #2980b9;
+      transform: scale(1.05);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    #calculate-btn {
+      flex: 1;
+    }
+
+    #copy-btn {
+      flex: 0 0 120px;
+      background: #2ecc71;
+      display: none; /* 使用内联样式控制 */
+    }
+
+    #copy-btn.visible {
+      display: block;
+    }
+
+    /* 添加提示动画 */
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .copy-success {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      animation: fadeOut 1.5s ease-in-out forwards;
+      z-index: 1000;
+    }
+
+    /* 控制按钮组样式 */
+    .control-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      width: auto;
+      order: 2; /* 设置按钮放在右边 */
+    }
+    
+    .control-btn {
+      min-width: 80px;
+      max-width: 120px;
+      width: calc(15vw - 20px); /* 根据视窗宽度动态调整按钮宽度 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      background: white;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      white-space: nowrap; /* 防止文字换行 */
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .control-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .control-btn .btn-icon {
+      font-size: 16px;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+    
+    .control-btn.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(52, 152, 219, 0.2);
+    }
+    
+    /* 移动端适配 */
+    @media (max-width: 480px) {
+      .control-buttons {
+        gap: 8px;
+      }
+      
+      .control-btn {
+        min-width: 60px;
+        max-width: 90px;
+        width: calc(20vw - 10px);
+        height: 36px;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+      
+      .control-btn .btn-icon {
+        font-size: 14px;
+        margin-right: 1px;
+      }
+      
+      h1 {
+        margin-bottom: 0 !important; /* 移除标题底部间距 */
+      }
+    }
+
+    /* 超小屏幕适配 */
+    @media (max-width: 360px) {
+      .control-btn {
+        min-width: 50px;
+        max-width: 70px;
+        width: calc(25vw - 10px);
+        padding: 0 6px;
+      }
+      
+      .control-btn .btn-icon {
+        margin-right: 1px;
+      }
+    }
+
+    /* 添加触摸优化 */
+    @media (hover: none) {
+      input, select, button {
+        -webkit-tap-highlight-color: transparent;
+      }
+      .control-btn:active,
+      button:active {
+        opacity: 0.7;
+      }
+      .radio-group label {
+        padding: 8px 0;
+      }
+    }
+
+    /* 优化键盘弹出时的布局 */
+    @media (max-height: 600px) {
+      .container {
+        margin-bottom: 60px;
+      }
+      .settings-panel {
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+    }
+
+    /* 优化销售类型选择布局 */
+    .sale-type-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 5px 0;
+    }
+
+    .sale-type-label {
+      margin: 0 !important;
+      white-space: nowrap;
+      width: 120px;
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    /* 优化选择模式布局 */
+    .mode-select-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 5px 0;
+    }
+
+    .mode-select-label {
+      margin: 0 !important;
+      white-space: nowrap;
+      width: 120px;
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    /* 优化输入框布局 */
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 10px 0;
+    }
+
+    .input-group label {
+      margin: 0;
+      white-space: nowrap;
+      width: 120px;
+      text-align: left;
+      flex-shrink: 0;
+      font-size: 13px;
+      color: #34495e;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 120px;
+      max-width: 100%;
+      height: 36px;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .input-wrapper input,
+    .input-wrapper select {
+      flex: 1;
+      min-width: 120px;
+      max-width: 100%;
+      height: 36px;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .detail-hint {
+      margin: 0;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #3498db;
+      flex-shrink: 0;
+      text-align: left;
+      width: auto;
+      min-width: 150px;
+    }
+
+    /* 优化标题样式 */
+    .result-section h4 {
+      margin: 0 0 12px;
+      color: #2c3e50;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* 优化高亮项样式 */
+    .result-item.highlight {
+      background: #f8f9fa;
+      border-left: 3px solid #3498db;
+    }
+
+    /* 移动端适配优化 */
+    @media (max-width: 480px) {
+      .input-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .input-wrapper {
+        width: 100%;
+        flex: 1;
+      }
+      
+      .input-wrapper input,
+      .input-wrapper select {
+        flex: 1;
+      }
+      
+      .detail-hint {
+        font-size: 11px;
+        min-width: auto;
+      }
+      
+      .result-item {
+        padding: 10px;
+      }
+      
+      .formula-hint {
+        margin: 5px 0 0 10px;
+        padding: 5px 8px;
+      }
+    }
+
+    /* 在原有样式表中添加 */
+    .history-btn {
+      background: #17a2b8 !important;
+      color: white !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+    }
+
+    .history-btn:hover {
+      background: #138496 !important;
+    }
+
+    .btn-icon {
+      font-size: 16px;
+    }
+
+    /* 添加复选框样式 */
+    .copy-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 8px;
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
+    
+    .checkbox-label span {
+      font-size: 14px;
+      color: #34495e;
+    }
+
+    /* 优化设置面板样式 */
+    .settings-panel {
+      max-width: 600px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .settings-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      z-index: 2;
+    }
+    
+    .settings-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .tab-btn {
+      white-space: nowrap;
+      padding: 8px 16px;
+      font-size: 13px;
+      border: none;
+      background: #f0f2f5;
+      color: #666;
+      border-radius: 20px;
+    }
+    
+    .tab-btn.active {
+      background: #3498db;
+      color: white;
+      font-weight: 500;
+    }
+    
+    .settings-section {
+      padding: 20px 0;
+    }
+    
+    .settings-section h4 {
+      font-size: 15px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .setting-item {
+      margin-bottom: 20px;
+      padding: 0 15px;
+    }
+    
+    .setting-item label {
+      font-size: 14px;
+      color: #34495e;
+      margin-bottom: 10px;
+    }
+    
+    .setting-item input[type="number"] {
+      height: 40px;
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .setting-item input[type="number"]:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+    }
+    
+    .settings-footer {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      padding: 15px 0;
+      border-top: 1px solid #eee;
+      margin-top: 20px;
+    }
+
+    /* 添加新的样式 */
+    .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: background-color 0.2s;
+    }
+    
+    .switch-label:hover {
+      background: #f0f2f5;
+    }
+    
+    .switch-label > span {
+      flex: 1;
+      margin-left: 8px;
+    }
+    
+    .switch-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 12px;
+      border-left: 1px solid #e0e0e0;
+    }
+    
+    .action-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .action-label input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* 优化显示与复制设置样式 */
+    .switch-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .switch-label {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+      height: 42px;
+    }
+    
+    .switch-label:hover {
+      background: #fff;
+      border-color: #3498db;
+      box-shadow: 0 2px 4px rgba(52,152,219,0.1);
+    }
+    
+    .switch-label > input[type="checkbox"] {
+      width: 36px;
+      height: 20px;
+      position: relative;
+      appearance: none;
+      background: #ddd;
+      border-radius: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    
+    .switch-label > input[type="checkbox"]:checked {
+      background: #3498db;
+    }
+    
+    .switch-label > input[type="checkbox"]::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s;
+    }
+    
+    .switch-label > input[type="checkbox"]:checked::before {
+      left: 18px;
+    }
+    
+    .switch-label > span {
+      margin: 0 10px;
+      font-size: 13px;
+      color: #34495e;
+      flex: 1;
+    }
+    
+    .switch-actions {
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      border-left: 1px solid #e0e0e0;
+    }
+    
+    .action-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .action-label input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      cursor: pointer;
+    }
+    
+    .action-label span {
+      font-size: 12px;
+      color: #666;
+      user-select: none;
+    }
+    
+    /* 优化设置项标题 */
+    .setting-item > label {
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
+    /* 移动端适配 */
+    @media (max-width: 480px) {
+      .switch-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .switch-label {
+        padding: 8px 12px;
+        height: 38px;
+      }
+      
+      .switch-label > span {
+        font-size: 12px;
+      }
+      
+      .action-label span {
+        font-size: 11px;
+      }
+    }
+
+    /* 修改显示与复制设置的样式 */
+    .switch-label {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+      height: 36px;
+    }
+    
+    .switch-label:hover {
+      background: #fff;
+      border-color: #3498db;
+      box-shadow: 0 2px 4px rgba(52,152,219,0.1);
+    }
+    
+    .switch-label > span {
+      flex: 1;
+      font-size: 13px;
+      color: #34495e;
+      margin-right: 10px;
+      order: -1; /* 将文字移到最左边 */
+    }
+    
+    .switch-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .control-group input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      cursor: pointer;
+    }
+    
+    .control-group label {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+    
+    .switch-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* 添加新的样式 */
+    .setting-group {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .setting-group h5 {
+      margin: 0 0 15px 0;
+      color: #2c3e50;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .mud-hint, .clean-hint {
+      display: none;
+      font-size: 12px;
+      color: #3498db;  /* 修改为与其他输入框说明相同的颜色 */
+      margin-top: 5px;
+    }
+
+    /* 优化设置面板按钮和标签 */
+    .settings-panel {
+      max-height: 85vh;
+    }
+    
+    .tab-btn {
+      height: 32px;
+      padding: 0 12px;
+      font-size: 13px;
+      white-space: nowrap;
+      min-width: fit-content;
+    }
+    
+    .settings-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 15px 0;
+      margin: 0;
+      -webkit-overflow-scrolling: touch;
+      gap: 8px;
+    }
+    
+    .tab-btn {
+      height: 32px;
+      padding: 0 12px;
+      font-size: 13px;
+      white-space: nowrap;
+      min-width: fit-content;
+      background: white;
+      border: 1px solid #e0e0e0;
+      color: #666;
+      transition: all 0.2s ease;
+    }
+    
+    .tab-btn.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+
+    /* 优化设置组样式 */
+    .setting-group {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .setting-group h5 {
+      font-size: 14px;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* 优化输入框样式 */
+    .setting-item {
+      margin-bottom: 12px;
+    }
+    
+    .setting-item label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    
+    .setting-item input[type="number"] {
+      width: 100%;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #f8f9fa;
+      font-size: 14px;
+    }
+    
+    .setting-item input[type="number"]:focus {
+      border-color: #3498db;
+      background: white;
+      outline: none;
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 480px) {
+      .settings-panel {
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      
+      .settings-header {
+        padding: 15px;
+        margin: 0;
+      }
+      
+      .settings-section {
+        padding: 15px;
+      }
+      
+      .settings-footer {
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+      }
+      
+      .settings-footer button {
+        height: 34px;
+        padding: 0 12px;
+        font-size: 13px;
+        min-width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="control-btn mode-btn" onclick="window.toggleDetailMode()">
+        <span class="btn-icon">📱</span><span>简洁</span>
+      </button>
+      <h1>生姜经营计算器</h1>
+      <button class="control-btn settings-btn" onclick="toggleSettings()">
+        <span class="btn-icon">⚙️</span><span>设置</span>
+      </button>
+    </div>
+    
+    <div class="input-section">
+      <div class="mode-select-container">
+        <label class="mode-select-label">计算模式选择：</label>
+        <select id="calculation-type">
+          <option value="loss">损耗分析</option>
+          <option value="sales">销售总价</option>
+          <option value="profit">利润核算</option>
+        </select>
+      </div>
+
+      <div id="mode-explanation" class="explanation" style="display: none;">
+        <div id="loss-desc" style="display: none;">
+          <p>损耗分析：计算采购到销售的损耗比例</p>
+        </div>
+        <div id="sales-desc" style="display: none;">
+          <p>销售总价：计算预期销售总额</p>
+        </div>
+        <div id="profit-desc" style="display: none;">
+          <p>利润核算：计算最终经营利润</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 公共输入区域 -->
+    <div class="input-section">
+      <div class="sale-type-container">
+        <label class="sale-type-label">销售类型选择：</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="sale-type" value="mud" checked> 泥姜
+          </label>
+          <label>
+            <input type="radio" name="sale-type" value="clean"> 洗姜
+          </label>
+        </div>
+      </div>
+
+      <div id="sale-type-explanation" class="explanation" style="display: none;">
+        <div id="mud-desc" style="display: none;">
+          <p>泥姜说明：带包装销售，每件毛重按50斤计算（含包装）</p>
+        </div>
+        <div id="clean-desc" style="display: none;">
+          <p>洗姜说明：净重销售，销售时按加工后打包重量计算</p>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>出库_箱：</label>
+        <div class="input-wrapper">
+          <input type="number" id="boxes" step="1" placeholder="输入出库总箱数" value="500">
+          <span class="detail-hint">(原始采购的整箱数量)</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>实际出货_件：</label>
+        <div class="input-wrapper">
+          <input type="number" id="processed-boxes" step="1" value="440">
+          <span class="detail-hint">(实际完成销售的包装件数)</span>
+        </div>
+      </div>
+
+      <!-- 在洗姜每件重量输入项添加说明 -->
+      <div id="common-clean-weight" class="input-group hidden">
+        <label>洗姜每件重量_斤：</label>
+        <div class="input-wrapper">
+          <input type="number" id="clean-weight" step="0.01" placeholder="输入洗姜每件重量" value="50">
+          <span class="detail-hint">(加工后的净重，不含包装)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 销售总价专属输入 -->
+    <div id="sales-inputs" class="input-section hidden">
+      <div class="input-group">
+        <label>销售单价_元/斤：</label>
+        <div class="input-wrapper">
+          <input type="number" id="price" step="0.01" value="4">
+          <span class="detail-hint">(当前市场销售价格)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 利润核算专属输入 -->
+    <div id="profit-inputs" class="input-section hidden">
+      <div class="input-group" id="fee-input-group">
+        <label for="fee">加工费用（元）</label>
+        <div class="input-wrapper">
+          <input type="number" id="fee" step="100" value="1000">
+          <span class="detail-hint mud-hint">(自动计算：实际出货量(吨) × <span id="current-mud-fee-rate">110</span>元/吨)</span>
+          <span class="detail-hint clean-hint">(自动计算：实际出货量(吨) × <span id="current-clean-fee-rate">500</span>元/吨)</span>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>每箱采购价_元：</label>
+        <div class="input-wrapper">
+          <input type="number" id="box-cost" value="126.7" step="0.01">
+          <span class="detail-hint">(含包装的整箱采购成本)</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>其他支出占比：</label>
+        <div class="input-wrapper">
+          <input type="number" id="expense-ratio" value="18.26" step="0.01">
+          <span class="detail-hint">(占采购成本总和的百分比)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="calculate-btn" onclick="calculate(); if(!localStorage.getItem('pendingCalculation')) saveCalculationHistory()">开始计算</button>
+      <button onclick="copyResults()" id="copy-btn" class="hidden">📋 复制结果</button>
+    </div>
+
+    <div class="result hidden" id="result-area">
+      <h3>计算结果</h3>
+      <div id="result-content"></div>
+    </div>
+
+    <!-- 在损耗分析结果区域添加 -->
+    <div id="loss-results" class="results hidden">
+      <h3>损耗分析结果</h3>
+      <div class="result-item">
+        <strong>毛重损耗比例：</strong>${(grossLoss * 100).toFixed(2)}% 
+        <span class="hint">(仅泥姜模式)</span>
+      </div>
+      <div class="result-item">
+        <strong>毛重采购量：</strong>${grossPurchaseTon.toFixed(3)}吨
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>采购箱数 × 50斤/箱 ÷ 2000斤/吨</div>
+          <div>${inputStates.boxes} × 50 ÷ 2000 = ${grossPurchaseTon.toFixed(3)}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>净重采购量：</strong>${totalPurchaseTon.toFixed(3)}吨
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>采购箱数 × 47.04斤/箱 ÷ 2000斤/吨</div>
+          <div>${inputStates.boxes} × 47.04 ÷ 2000 = ${totalPurchaseTon.toFixed(3)}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>实际出货量：</strong>${actualTon.toFixed(3)}吨
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>实际出货件数 × 每件重量 ÷ 2000斤/吨</div>
+          <div>${processed}件 × ${unitWeight}斤 ÷ 2000 = ${actualTon.toFixed(3)}</div>
+        </div>
+      </div>
+      <div class="result-item highlight">
+        <strong>净重损耗比例：</strong>${loss}%
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>(净重采购量 - 实际出货量) ÷ 净重采购量 × 100%</div>
+          <div>(${totalPurchaseTon.toFixed(3)} - ${actualTon.toFixed(3)}) ÷ ${totalPurchaseTon.toFixed(3)} × 100% = ${loss}%</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>毛重损耗比例：</strong>${(grossLoss * 100).toFixed(2)}% 
+        <span class="hint">(仅泥姜模式)</span>
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>1 - (实际出货件数 ÷ 采购箱数)</div>
+          <div>1 - (${processed} ÷ ${inputStates.boxes}) = ${(grossLoss * 100).toFixed(2)}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 在利润核算结果区域添加 -->
+    <div id="profit-results" class="results hidden">
+      <h3>利润核算结果</h3>
+      <div class="result-item">
+        <strong>采购成本：</strong>¥${purchaseCost.toFixed(2)}元
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>出库箱数 × 每箱采购价格</div>
+          <div>${boxes} × ${boxCost} = ${purchaseCost.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>其他采购支出：</strong>¥${otherCost.toFixed(2)}元
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>总采购成本 × ${expenseRatio}%</div>
+          <div>${totalPurchaseCost.toFixed(2)} × ${expenseRatio}% = ${otherCost.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>总采购成本：</strong>¥${totalPurchaseCost.toFixed(2)}元
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>采购成本 ÷ (1 - ${expenseRatio}%)</div>
+          <div>${purchaseCost.toFixed(2)} ÷ (1 - ${expenseRatio}%) = ${totalPurchaseCost.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>${feeTitle}：</strong>¥${fee.toFixed(2)}元
+        <div class="formula-hint">
+          <div>计算依据：</div>
+          <div>实际出货量 ${actualTon.toFixed(3)}吨 × ${feeRate}元/吨</div>
+        </div>
+      </div>
+      <div class="result-item highlight">
+        <strong>总成本：</strong>¥${totalCost.toFixed(2)}元
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>总采购成本 + 加工费</div>
+          <div>${totalPurchaseCost.toFixed(2)} + ${fee.toFixed(2)} = ${totalCost.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="result-item highlight">
+        <strong>预估利润：</strong>¥${profit}元
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>销售总额 - 总成本</div>
+          <div>${sales.toFixed(2)} - ${totalCost.toFixed(2)} = ${profit}</div>
+        </div>
+      </div>
+      <div class="result-item">
+        <strong>销售利润率：</strong>${profitRatio}% 
+        <span class="hint">(利润/销售额)</span>
+        <div class="formula-hint">
+          <div>计算公式：</div>
+          <div>(利润 ÷ 销售额) × 100%</div>
+          <div>(${profit} ÷ ${sales.toFixed(2)}) × 100% = ${profitRatio}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加设置面板 -->
+    <div id="settings-panel" class="settings-panel hidden">
+      <div class="settings-header">
+        <h3>系统设置</h3>
+        <div class="settings-tabs">
+          <button class="tab-btn active" onclick="switchSettingsTab('defaults')">默认值设置</button>
+          <button class="tab-btn" onclick="switchSettingsTab('display')">显示与复制</button>
+        </div>
+      </div>
+
+      <div id="defaults-settings" class="settings-section active">
+        <h4>默认值设置</h4>
+        <!-- 基础数据默认值 -->
+        <div class="setting-group">
+          <h5>基础数据</h5>
+        <div class="setting-item">
+          <label>采购箱数默认值</label>
+          <input type="number" id="default-boxes" step="1">
+        </div>
+        <div class="setting-item">
+          <label>洗姜每件重量默认值</label>
+          <input type="number" id="default-clean-weight" step="0.01">
+        </div>
+        <div class="setting-item">
+            <label>每箱净重</label>
+            <div class="input-wrapper">
+              <input type="number" id="default-net-weight" value="47.04" step="0.01" min="0">
+              <span class="unit">斤/箱</span>
+        </div>
+            <div class="detail-hint">默认47.04斤/箱</div>
+        </div>
+        </div>
+        
+        <!-- 价格相关默认值 -->
+        <div class="setting-group">
+          <h5>价格设置</h5>
+          <div class="setting-item">
+            <label>销售单价默认值</label>
+            <input type="number" id="default-price" step="0.01">
+          </div>
+          <div class="setting-item">
+            <label>原箱净重成本默认值</label>
+            <input type="number" id="default-box-cost" step="0.01">
+          </div>
+        </div>
+        
+        <!-- 费用相关默认值 -->
+        <div class="setting-group">
+          <h5>费用设置</h5>
+        <div class="setting-item">
+          <label>加工费默认值（元）</label>
+          <input type="number" id="default-fee" step="100" value="1000">
+        </div>
+        <div class="setting-item">
+          <label>泥姜人工费单价（元/吨）</label>
+          <input type="number" id="default-mud-labor-fee" step="1" value="110">
+        </div>
+        <div class="setting-item">
+          <label>洗姜加工费单价（元/吨）</label>
+          <input type="number" id="default-clean-process-fee" step="1" value="500">
+        </div>
+        <div class="setting-item">
+          <label>加工费保底金额</label>
+          <input type="number" id="default-min-fee" value="800">
+        </div>
+        <div class="setting-item">
+          <label>其他支出占比默认值</label>
+          <input type="number" id="default-expense-ratio" step="0.01">
+        </div>
+      </div>
+      </div>
+
+      <div id="display-settings" class="settings-section">
+        <h4>显示与复制设置</h4>
+        <div class="setting-item">
+          <label>基础信息</label>
+          <div class="switch-options">
+            <label class="switch-label">
+              <input type="checkbox" id="display-formula">
+              <span>显示计算公式</span>
+            </label>
+            <label class="switch-label">
+              <input type="checkbox" id="display-hint" checked>
+              <span>显示提示信息</span>
+            </label>
+            <label class="switch-label">
+              <input type="checkbox" id="display-highlight" checked>
+              <span>高亮重要结果</span>
+            </label>
+            <label class="switch-label">
+              <input type="checkbox" id="display-autoscroll" checked>
+              <span>自动滚动到结果</span>
+            </label>
+        </div>
+        </div>
+
+        <div class="setting-item">
+          <label>时间与类型</label>
+          <div class="switch-options">
+            <label class="switch-label">
+              <span>时间戳</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-timestamp" checked>
+                  <label>显示</label>
+        </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-timestamp" checked>
+                  <label>复制</label>
+      </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>计算类型</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-type" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-type" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>损耗分析结果</label>
+          <div class="switch-options">
+            <label class="switch-label">
+              <span>净重采购量</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-loss-net-purchase" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-loss-net-purchase" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>毛重采购量</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-loss-gross-purchase" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-loss-gross-purchase" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>实际出货量</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-loss-actual" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-loss-actual" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>净重损耗比例</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-loss-net-ratio" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-loss-net-ratio" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>毛重损耗比例</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-loss-gross-ratio" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-loss-gross-ratio" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>销售结果</label>
+          <div class="switch-options">
+            <label class="switch-label">
+              <span>销售总额</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-sales-total" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-sales-total" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>利润分析</label>
+          <div class="switch-options">
+            <label class="switch-label">
+              <span>采购成本</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-cost" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-cost" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>其他采购支出</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-expense" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-expense" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>加工费用</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-fee" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-fee" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>总成本</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-total" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-total" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>利润</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-result" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-result" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+            <label class="switch-label">
+              <span>销售利润率</span>
+              <div class="switch-controls">
+                <div class="control-group">
+                  <input type="checkbox" id="display-profit-ratio" checked>
+                  <label>显示</label>
+                </div>
+                <div class="control-group">
+                  <input type="checkbox" id="copy-profit-ratio" checked>
+                  <label>复制</label>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-footer">
+        <button onclick="saveDefaults()">保存设置</button>
+        <button onclick="resetDefaults()" class="history-btn">
+          <span class="btn-icon">🔄</span>恢复默认
+        </button>
+        <button onclick="window.location.href='history.html'" class="history-btn">
+          <span class="btn-icon">📋</span>历史记录
+        </button>
+        <button onclick="toggleSettings()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 在脚本开始处添加立即执行函数
+    (function() {
+      // 单位转换常量
+      const JIN_TO_TON = 2000;
+      
+      // 数据存储对象
+      let inputStates = {
+        boxes: "500",          // 出货箱数默认500
+        "processed-boxes": "440",  // 实际出货件数默认440
+        "clean-weight": "50",   // 洗姜重量默认50斤
+        price: "4",
+        fee: "1000",
+        "box-cost": "126.7",
+        "expense-ratio": "18.26",
+        "calculation-type": "loss",
+        "sale-type": "mud",
+        mudFeeManual: false,    // 泥姜模式手动输入标记
+        cleanFeeManual: false,  // 洗姜模式手动输入标记
+        mudManualFee: null,     // 泥姜模式手动输入值
+        cleanManualFee: null,   // 洗姜模式手动输入值
+        lastSaleType: 'mud'     // 记录上一次的销售类型
+      };
+
+      // 全局状态
+      let isDetailMode = false;
+
+      // 修改 DEFAULT_SETTINGS 对象
+      const DEFAULT_SETTINGS = {
+        // 基础数据默认值
+        boxes: 500,
+        cleanWeight: 50,
+        netWeight: 47.04,
+        
+        // 价格相关默认值
+        price: 4.0,
+        boxCost: 126.7,
+        
+        // 费用相关默认值
+        minFee: 800,
+        mudLaborFee: 110,    // 泥姜人工费单价
+        cleanProcessFee: 500, // 洗姜加工费单价
+        expenseRatio: 18.26,
+        
+        // 显示选项保持不变
+        displayOptions: {
+          // ...
+        },
+        // 复制选项保持不变
+        copyOptions: {
+          // ...
+        }
+      };
+
+      let currentSettings = {...DEFAULT_SETTINGS};
+
+      // 添加显示和复制设置的全局变量
+      let displaySettings = {};
+      let copySettings = {};
+
+      // 将函数定义为全局
+      window.toggleDetailMode = function() {
+        isDetailMode = !isDetailMode;
+        localStorage.setItem('detailMode', isDetailMode);
+        
+        // 更新按钮状态和文字
+        const btn = document.querySelector('.mode-btn');
+        btn.classList.toggle('active');
+        btn.innerHTML = isDetailMode ? 
+          '<span class="btn-icon">🔍</span>详细' : 
+          '<span class="btn-icon">📱</span><span>简洁</span>';
+
+        // 更新显示状态
+        document.querySelectorAll('.formula-hint, .detail-hint, .explanation').forEach(el => {
+          if (!el.classList.contains('mud-hint') && !el.classList.contains('clean-hint')) {
+          el.style.display = isDetailMode ? 'block' : 'none';
+          }
+        });
+        
+        // 单独处理人工费和加工费说明的显示
+        const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+        const mudHint = document.querySelector('.mud-hint');
+        const cleanHint = document.querySelector('.clean-hint');
+        if (mudHint && cleanHint) {
+          mudHint.style.display = isDetailMode && saleType === 'mud' ? 'block' : 'none';
+          cleanHint.style.display = isDetailMode && saleType === 'clean' ? 'block' : 'none';
+        }
+        
+        // 强制刷新说明内容
+        updateModeExplanation();
+        updateSaleTypeExplanation();
+        
+        // 如果已有计算结果，重新计算以更新显示
+        if(!document.getElementById('result-area').classList.contains('hidden')) {
+          calculate();
+        }
+      };
+
+      // 初始化页面时恢复数据
+      function restoreInputValues() {
+        Object.keys(inputStates).forEach(id => {
+          const element = document.getElementById(id);
+          if (element) element.value = inputStates[id];
+        });
+        document.getElementById('calculation-type').value = inputStates["calculation-type"];
+        document.querySelector(`input[name="sale-type"][value="${inputStates["sale-type"]}"]`).checked = true;
+      }
+
+      // 保存当前输入状态
+      function saveInputValues() {
+        Object.keys(inputStates).forEach(id => {
+          const element = document.getElementById(id);
+          if (element) inputStates[id] = element.value;
+        });
+        inputStates["calculation-type"] = document.getElementById('calculation-type').value;
+        inputStates["sale-type"] = document.querySelector('input[name="sale-type"]:checked').value;
+      }
+
+      // 更新模式说明
+      function updateModeExplanation() {
+        const calcType = document.getElementById('calculation-type').value;
+        
+        // 隐藏所有说明
+        document.querySelectorAll('#mode-explanation > div').forEach(el => {
+          el.style.display = 'none';
+        });
+        
+        // 显示当前模式说明（仅在详细模式）
+        if(isDetailMode) {
+          const currentDesc = document.getElementById(`${calcType}-desc`);
+          if(currentDesc) currentDesc.style.display = 'block';
+        }
+      }
+
+      // 更新销售类型说明
+      function updateSaleTypeExplanation() {
+        const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+        // 先隐藏所有说明
+        document.querySelectorAll('#sale-type-explanation > div').forEach(el => {
+          el.style.display = 'none';
+        });
+        // 显示当前类型说明
+        document.getElementById(`${saleType}-desc`).style.display = 'block';
+      }
+
+      // 动态显示控制
+      function updateUI() {
+        const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+        const isClean = saleType === 'clean';
+        const calcType = document.getElementById('calculation-type').value;
+
+        // 更新费用输入框标签
+        const feeLabel = document.querySelector('label[for="fee"]');
+        if (feeLabel) {
+          feeLabel.textContent = saleType === 'mud' ? '人工费用（元）' : '加工费用（元）';
+        }
+
+        // 更新说明
+        updateModeExplanation();
+        updateSaleTypeExplanation();
+
+        // 更新重量输入字段
+        const cleanWeightInput = document.getElementById('common-clean-weight');
+        if (cleanWeightInput) {
+          if (isClean) {
+            cleanWeightInput.style.display = 'flex';
+            cleanWeightInput.classList.remove('hidden');
+          } else {
+            cleanWeightInput.style.display = 'none';
+            cleanWeightInput.classList.add('hidden');
+          }
+        }
+
+        // 控制专属输入区域
+        document.querySelectorAll('[id$="-inputs"]').forEach(el => {
+          el.classList.add('hidden');
+        });
+
+        // 根据计算模式显示相应输入区域
+        if (calcType === 'profit') {
+          const salesInputs = document.getElementById('sales-inputs');
+          const profitInputs = document.getElementById('profit-inputs');
+          if (salesInputs) salesInputs.classList.remove('hidden');
+          if (profitInputs) profitInputs.classList.remove('hidden');
+        } else if (calcType === 'sales') {
+          const salesInputs = document.getElementById('sales-inputs');
+          if (salesInputs) salesInputs.classList.remove('hidden');
+        }
+
+        // 更新加工费计算（如果在利润核算模式）
+        if (calcType === 'profit' && !inputStates.isFeeManual) {
+          updateProcessingFee();
+        }
+
+        // 控制说明显示
+        const explanations = document.querySelectorAll('.detail-hint, .formula-hint, .explanation');
+        explanations.forEach(el => {
+          if (el.classList.contains('mud-hint') || el.classList.contains('clean-hint')) {
+            const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+            el.style.display = isDetailMode && 
+              ((saleType === 'mud' && el.classList.contains('mud-hint')) || 
+               (saleType === 'clean' && el.classList.contains('clean-hint'))) ? 'block' : 'none';
+          } else {
+            el.style.display = isDetailMode ? 'block' : 'none';
+          }
+        });
+
+        // 更新费用说明显示
+        const mudHint = document.querySelector('.mud-hint');
+        const cleanHint = document.querySelector('.clean-hint');
+        if (mudHint && cleanHint) {
+          mudHint.style.display = isDetailMode && saleType === 'mud' ? 'block' : 'none';
+          cleanHint.style.display = isDetailMode && saleType === 'clean' ? 'block' : 'none';
+        }
+      }
+
+      // 计算损耗分析
+      function calculateLoss() {
+        // 先进行所有计算
+        const boxes = parseFloat(inputStates.boxes);
+        const cleanWeight = parseFloat(inputStates['clean-weight']);
+        const processedBoxes = parseFloat(inputStates['processed-boxes']);
+        
+        // 获取每箱净重设置
+        const netWeightPerBox = currentSettings.netWeight || 47.04;
+        
+        // 计算净重采购量（吨）
+        const netPurchaseTon = (boxes * netWeightPerBox) / 2000;
+        
+        // 计算毛重采购量（吨）
+        const grossPurchaseTon = (boxes * 50) / 2000;
+        
+        // 计算实际出货量（吨）
+        const actualTon = (processedBoxes * cleanWeight) / 2000;
+        
+        // 计算净重损耗比例
+        const netLossRatio = ((netPurchaseTon - actualTon) / netPurchaseTon * 100).toFixed(2);
+        
+        // 计算毛重损耗比例
+        const grossLossRatio = ((grossPurchaseTon - actualTon) / grossPurchaseTon * 100).toFixed(2);
+
+        // 然后根据显示设置生成 HTML
+        return `
+          <div class="result-section">
+            <h4>损耗分析结果</h4>
+            ${document.getElementById('display-loss-net-purchase').checked ? `
+            <div class="result-item">
+              <strong>净重采购量：</strong>${netPurchaseTon.toFixed(3)}吨
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>采购箱数 × ${netWeightPerBox}斤/箱 ÷ 2000斤/吨</div>
+                <div>${boxes} × ${netWeightPerBox} ÷ 2000 = ${netPurchaseTon.toFixed(3)}</div>
+              </div>
+            </div>` : ''}
+            ${document.getElementById('display-loss-gross-purchase').checked ? `
+            <div class="result-item">
+              <strong>毛重采购量：</strong>${grossPurchaseTon.toFixed(3)}吨
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>出库箱数 × 50斤/箱 ÷ 2000斤/吨</div>
+                <div>${boxes} × 50 ÷ 2000 = ${grossPurchaseTon.toFixed(3)}</div>
+              </div>
+            </div>` : ''}
+            ${document.getElementById('display-loss-actual').checked ? `
+            <div class="result-item">
+              <strong>实际出货量：</strong>${actualTon.toFixed(3)}吨
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>实际出货件数 × ${cleanWeight}斤/件 ÷ 2000斤/吨</div>
+                <div>${processedBoxes} × ${cleanWeight} ÷ 2000 = ${actualTon.toFixed(3)}</div>
+              </div>
+            </div>` : ''}
+            ${document.getElementById('display-loss-net-ratio').checked ? `
+            <div class="result-item highlight">
+              <strong>净重损耗比例：</strong>${netLossRatio}%
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>(净重采购量 - 实际出货量) ÷ 净重采购量 × 100%</div>
+                <div>(${netPurchaseTon.toFixed(3)} - ${actualTon.toFixed(3)}) ÷ ${netPurchaseTon.toFixed(3)} × 100% = ${netLossRatio}%</div>
+              </div>
+            </div>` : ''}
+            ${document.getElementById('display-loss-gross-ratio').checked ? `
+            <div class="result-item highlight">
+              <strong>毛重损耗比例：</strong>${grossLossRatio}%
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>(毛重采购量 - 实际出货量) ÷ 毛重采购量 × 100%</div>
+                <div>(${grossPurchaseTon.toFixed(3)} - ${actualTon.toFixed(3)}) ÷ ${grossPurchaseTon.toFixed(3)} × 100% = ${grossLossRatio}%</div>
+              </div>
+            </div>` : ''}
+          </div>
+        `;
+      }
+
+      // 计算销售总价
+      function calculateSales() {
+        const processedBoxes = parseFloat(inputStates['processed-boxes']);
+        const price = parseFloat(inputStates.price);
+        const cleanWeight = parseFloat(inputStates['clean-weight']);
+        const saleType = inputStates['sale-type'];
+        
+        // 根据模式选择每件重量
+        const unitWeight = saleType === 'mud' ? 50 : cleanWeight; // 泥姜固定50斤/件
+        
+        // 计算销售总额
+        const salesTotal = processedBoxes * unitWeight * price; // 直接计算总额
+
+        return `
+          <div class="result-section">
+            <h4>销售结果</h4>
+            ${document.getElementById('display-sales-total').checked ? `
+            <div class="result-item highlight">
+              <strong>销售总额：</strong>${salesTotal.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>销售件数 × ${unitWeight}斤/件 × ${price}元/斤</div>
+                <div>${processedBoxes} × ${unitWeight} × ${price} = ${salesTotal.toFixed(2)}</div>
+              </div>
+            </div>` : ''}
+          </div>
+        `;
+      }
+
+      // 计算利润核算
+      function calculateProfit() {
+        // 计算actualTon
+        const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+        const isMud = saleType === 'mud';
+        const unitWeight = isMud ? 50 : parseFloat(inputStates["clean-weight"]) || 0;
+        const processedBoxes = parseFloat(inputStates["processed-boxes"]) || 0;
+        const actualTon = (processedBoxes * unitWeight) / 2000;
+
+        // 计算销售总额
+        const price = parseFloat(inputStates.price);
+        const sales = (unitWeight * processedBoxes * price);
+
+        // 计算采购成本
+        const boxCost = parseFloat(inputStates["box-cost"]);
+        const boxes = parseFloat(inputStates.boxes);
+        const purchaseCost = boxCost * boxes;
+
+        const fee = parseFloat(inputStates.fee);
+        const expenseRatio = parseFloat(inputStates["expense-ratio"]);
+        
+        // 计算总采购成本 (包含其他支出)
+        const totalPurchaseCost = purchaseCost / (1 - expenseRatio / 100);
+        
+        // 计算其他采购支出
+        const otherCost = totalPurchaseCost - purchaseCost;
+        
+        // 计算总成本 (总采购成本 + 加工费)
+        const totalCost = totalPurchaseCost + fee;
+        
+        // 计算利润
+        const profit = (sales - totalCost).toFixed(2);
+        
+        // 计算利润率
+        const profitRatio = (profit / sales * 100).toFixed(2);
+
+        // 根据模式选择费用名称和费率
+        const feeTitle = isMud ? '人工费用' : '加工费用';
+        const feeRate = isMud ? currentSettings.mudLaborFee : currentSettings.cleanProcessFee;
+
+        return `
+          <div class="result-section">
+            <h4>利润分析</h4>
+            ${document.getElementById('display-profit-cost').checked ? `
+            <div class="result-item">
+              <strong>采购成本：</strong>¥${purchaseCost.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>出库箱数 × 每箱采购价格</div>
+                <div>${boxes} × ${boxCost} = ${purchaseCost.toFixed(2)}</div>
+              </div>
+            </div>` : ''}
+            <div class="result-item">
+              <strong>其他采购支出：</strong>¥${otherCost.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>总采购成本 × ${expenseRatio}%</div>
+                <div>${totalPurchaseCost.toFixed(2)} × ${expenseRatio}% = ${otherCost.toFixed(2)}</div>
+              </div>
+            </div>
+            <div class="result-item">
+              <strong>总采购成本：</strong>¥${totalPurchaseCost.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>采购成本 ÷ (1 - ${expenseRatio}%)</div>
+                <div>${purchaseCost.toFixed(2)} ÷ (1 - ${expenseRatio}%) = ${totalPurchaseCost.toFixed(2)}</div>
+              </div>
+            </div>
+            <div class="result-item">
+              <strong>${feeTitle}：</strong>¥${fee.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算依据：</div>
+                <div>实际出货量 ${actualTon.toFixed(3)}吨 × ${feeRate}元/吨</div>
+              </div>
+            </div>
+            <div class="result-item highlight">
+              <strong>总成本：</strong>¥${totalCost.toFixed(2)}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>总采购成本 + 加工费</div>
+                <div>${totalPurchaseCost.toFixed(2)} + ${fee.toFixed(2)} = ${totalCost.toFixed(2)}</div>
+              </div>
+            </div>
+            <div class="result-item highlight">
+              <strong>预估利润：</strong>¥${profit}元
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>销售总额 - 总成本</div>
+                <div>${sales.toFixed(2)} - ${totalCost.toFixed(2)} = ${profit}</div>
+              </div>
+            </div>
+            <div class="result-item">
+              <strong>销售利润率：</strong>${profitRatio}% 
+              <span class="hint">(利润/销售额)</span>
+              <div class="formula-hint">
+                <div>计算公式：</div>
+                <div>(利润 ÷ 销售额) × 100%</div>
+                <div>(${profit} ÷ ${sales.toFixed(2)}) × 100% = ${profitRatio}%</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 修改加工费计算逻辑
+      function updateProcessingFee() {
+        const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+        // 如果当前模式已经手动输入过，则不自动计算
+        if ((saleType === 'mud' && inputStates.mudFeeManual) || 
+            (saleType === 'clean' && inputStates.cleanFeeManual)) {
+          return;
+        }
+        
+        const processedBoxes = parseFloat(inputStates['processed-boxes']) || 0;
+        const cleanWeight = parseFloat(inputStates['clean-weight']) || 0;
+        const isMud = saleType === 'mud';
+        
+        // 根据模式选择每件重量和费率
+        const unitWeight = isMud ? 50 : cleanWeight;
+        const feeRate = isMud ? currentSettings.mudLaborFee : currentSettings.cleanProcessFee;
+        
+        // 计算实际出货量（吨）
+          const actualTon = (processedBoxes * unitWeight) / 2000;
+        
+        // 计算费用（不低于保底金额）
+        const calculatedFee = Math.max(actualTon * feeRate, currentSettings.minFee);
+        
+        // 更新费用输入框
+        document.getElementById('fee').value = calculatedFee.toFixed(2);
+        inputStates.fee = calculatedFee.toFixed(2);
+      }
+
+      // 核心计算函数
+      function calculate() {
+        // 检查是否是从历史记录跳转来的
+        const isPendingCalculation = localStorage.getItem('pendingCalculation');
+        
+        saveInputValues();
+        const calcType = inputStates["calculation-type"];
+        let resultHTML = '';
+
+        // 保留结果区域控制逻辑
+        document.querySelectorAll('.results').forEach(el => {
+          el.classList.add('hidden');
+        });
+        
+        // 根据模式显示对应结果
+        switch(calcType) {
+          case 'loss':
+            resultHTML = `
+              <div class="result-section">
+                ${calculateLoss()}
+              </div>
+            `;
+            break;
+          case 'sales':
+            resultHTML = `
+              <div class="result-section">
+                ${calculateLoss()}
+              </div>
+              <div class="result-section">
+                ${calculateSales()}
+              </div>
+            `;
+            break;
+          case 'profit':
+            resultHTML = `
+              <div class="result-section">
+                ${calculateLoss()}
+              </div>
+              <div class="result-section">
+                ${calculateSales()}
+              </div>
+              <div class="result-section">
+                ${calculateProfit()}
+              </div>
+            `;
+            break;
+        }
+
+        // 显示结果
+        document.getElementById('result-content').innerHTML = resultHTML;
+        document.getElementById('result-area').classList.remove('hidden');
+
+        // 显示复制按钮
+        document.getElementById('copy-btn').style.display = 'block';
+        document.getElementById('calculate-btn').style.width = 'calc(100% - 130px)';
+
+        // 应用显示设置
+        const resultItems = document.querySelectorAll('.result-item');
+        resultItems.forEach(item => {
+          const titleEl = item.querySelector('strong');
+          if (!titleEl) return;
+          
+          const title = titleEl.textContent;
+          
+          // 默认显示
+          item.style.display = 'block';
+          
+          // 检查各项显示设置
+          if (title.includes('采购量') && !document.getElementById('display-loss-net-purchase').checked && !document.getElementById('display-loss-gross-purchase').checked ||
+              title.includes('实际出货量') && !document.getElementById('display-loss-actual').checked ||
+              title.includes('损耗比例') && !document.getElementById('display-loss-net-ratio').checked && !document.getElementById('display-loss-gross-ratio').checked ||
+              title.includes('销售总额') && !document.getElementById('display-sales-total').checked ||
+              title.includes('采购成本') && !document.getElementById('display-profit-cost').checked ||
+              title.includes('其他支出') && !document.getElementById('display-profit-expense').checked ||
+              title.includes('加工费用') && !document.getElementById('display-profit-fee').checked ||
+              title.includes('总成本') && !document.getElementById('display-profit-total').checked ||
+              title.includes('预估利润') && !document.getElementById('display-profit-result').checked ||
+              title.includes('利润率') && !document.getElementById('display-profit-ratio').checked) {
+            item.style.display = 'none';
+          }
+        });
+
+        // 根据详细模式状态控制公式显示
+        document.querySelectorAll('.formula-hint, .detail-hint, .explanation').forEach(el => {
+          if (el.classList.contains('mud-hint') || el.classList.contains('clean-hint')) {
+            const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+            el.style.display = isDetailMode && 
+              ((saleType === 'mud' && el.classList.contains('mud-hint')) || 
+               (saleType === 'clean' && el.classList.contains('clean-hint'))) ? 'block' : 'none';
+          } else {
+            el.style.display = isDetailMode ? 'block' : 'none';
+          }
+        });
+
+        // 应用显示选项
+        if (!currentSettings.displayOptions.showHint) {
+          document.querySelectorAll('.hint').forEach(el => el.style.display = 'none');
+        }
+        
+        if (!currentSettings.displayOptions.highlightImportant) {
+          document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        }
+        
+        // 自动滚动
+        if (currentSettings.displayOptions.autoScroll) {
+        document.getElementById('result-area').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        }
+
+        // 根据显示选项控制结果显示
+        window.updateResultVisibility();
+
+        // 如果是从历史记录跳转来的，清除标记
+        if (isPendingCalculation) {
+          localStorage.removeItem('pendingCalculation');
+        }
+      }
+
+      // 事件监听
+      document.getElementById('calculation-type').addEventListener('change', function() {
+        saveInputValues();
+        updateUI();
+        restoreInputValues();
+        inputStates.isFeeManual = false; // 切换模式时重置
+      });
+
+      document.querySelectorAll('input[name="sale-type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const newSaleType = this.value;
+          const feeInput = document.getElementById('fee');
+          
+          // 根据新模式的状态决定是否使用手动输入值
+          if (newSaleType === 'mud' && inputStates.mudFeeManual) {
+            feeInput.value = inputStates.mudManualFee;
+            inputStates.fee = inputStates.mudManualFee;
+          } else if (newSaleType === 'clean' && inputStates.cleanFeeManual) {
+            feeInput.value = inputStates.cleanManualFee;
+            inputStates.fee = inputStates.cleanManualFee;
+            } else {
+            // 如果该模式没有手动输入过，则自动计算
+            updateProcessingFee();
+            }
+          
+          inputStates.lastSaleType = newSaleType;
+          saveInputValues();
+          updateUI();
+          restoreInputValues();
+        });
+      });
+
+      // 确保事件监听正确初始化
+      function initEventListeners() {
+        // 实时计算加工费用
+        document.getElementById('processed-boxes').addEventListener('input', updateProcessingFee);
+        document.getElementById('clean-weight').addEventListener('input', updateProcessingFee);
+        document.querySelectorAll('input[name="sale-type"]').forEach(radio => {
+          radio.addEventListener('change', updateProcessingFee);
+        });
+
+        // 新增手动修改监听
+        document.getElementById('fee').addEventListener('input', function() {
+          const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+          // 根据当前模式设置对应的手动标记
+          if (saleType === 'mud') {
+            inputStates.mudFeeManual = true;
+            inputStates.mudManualFee = this.value;
+          } else {
+            inputStates.cleanFeeManual = true;
+            inputStates.cleanManualFee = this.value;
+          }
+          saveInputValues();
+        });
+
+        // 添加其他输入项的监听
+        document.getElementById('boxes').addEventListener('input', saveInputValues);
+        document.getElementById('price').addEventListener('input', saveInputValues);
+
+        // 修改销售类型切换的监听
+        document.querySelectorAll('input[name="sale-type"]').forEach(radio => {
+          radio.addEventListener('change', function() {
+            const newSaleType = this.value;
+            const feeInput = document.getElementById('fee');
+            
+            // 根据新模式的状态决定是否使用手动输入值
+            if (newSaleType === 'mud' && inputStates.mudFeeManual) {
+              feeInput.value = inputStates.mudManualFee;
+              inputStates.fee = inputStates.mudManualFee;
+            } else if (newSaleType === 'clean' && inputStates.cleanFeeManual) {
+              feeInput.value = inputStates.cleanManualFee;
+              inputStates.fee = inputStates.cleanManualFee;
+            } else {
+              // 如果该模式没有手动输入过，则自动计算
+              updateProcessingFee();
+            }
+            
+            inputStates.lastSaleType = newSaleType;
+            saveInputValues();
+            updateUI();
+            restoreInputValues();
+          });
+        });
+      }
+
+      // 在初始化函数中添加检查待计算参数的逻辑
+      function init() {
+        // 从本地存储加载所有设置
+        const savedSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+        currentSettings = { ...DEFAULT_SETTINGS, ...savedSettings };
+        
+        // 应用保存的设置到输入框
+        document.getElementById('boxes').value = currentSettings.boxes;
+        document.getElementById('clean-weight').value = currentSettings.cleanWeight;
+        document.getElementById('price').value = currentSettings.price;
+        document.getElementById('box-cost').value = currentSettings.boxCost;
+        document.getElementById('expense-ratio').value = currentSettings.expenseRatio;
+        document.getElementById('fee').value = currentSettings.fee;
+        
+        // 更新加工费相关设置
+        window.MIN_FEE = currentSettings.minFee;
+        document.querySelectorAll('#current-fee-rate').forEach(el => {
+          el.textContent = currentSettings.processingFee;
+        });
+        
+        // 强制初始为简洁模式
+        isDetailMode = false;
+        localStorage.setItem('detailMode', 'false');
+
+        // 更新按钮状态和文字
+        const btn = document.querySelector('.mode-btn');
+        btn.classList.remove('active');
+        btn.innerHTML = '<span class="btn-icon">📱</span><span>简洁</span>';
+
+        // 强制隐藏所有说明
+        document.querySelectorAll('.formula-hint, .detail-hint, .explanation').forEach(el => {
+          el.style.display = 'none';
+        });
+
+        // 初始化事件监听
+        initEventListeners();
+        
+        // 保存当前输入值并更新UI
+        saveInputValues();
+        updateUI();
+        restoreInputValues();
+
+        // 加载保存的显示和复制设置
+        loadCurrentSettings();
+        
+        // 检查是否有待计算的参数
+        const pendingCalc = localStorage.getItem('pendingCalculation');
+        if (pendingCalc) {
+          try {
+            const { type, values } = JSON.parse(pendingCalc);
+            
+            // 设置计算类型
+            document.getElementById('calculation-type').value = type;
+            
+            // 设置销售类型
+            const saleTypeRadio = document.querySelector(`input[name="sale-type"][value="${values['sale-type']}"]`);
+            if (saleTypeRadio) saleTypeRadio.checked = true;
+            
+            // 填充所有输入值
+            Object.keys(values).forEach(key => {
+              const input = document.getElementById(key);
+              if (input) input.value = values[key];
+            });
+            
+            // 清除待计算参数
+            localStorage.removeItem('pendingCalculation');
+            
+            // 更新UI并执行计算
+            saveInputValues();
+            updateUI();
+            calculate();
+          } catch (e) {
+            console.error('Error applying pending calculation:', e);
+            localStorage.removeItem('pendingCalculation');
+          }
+        }
+      }
+
+      // 在页面加载时初始化
+      window.onload = function() {
+        init();
+        
+        // 首次加载不自动计算
+        document.getElementById('result-area').classList.add('hidden');
+        document.getElementById('copy-btn').style.display = 'none';
+        document.getElementById('calculate-btn').style.width = '100%';
+        
+        // 清除首次计算标记
+        delete window.hasCalculated;
+      }
+
+      // 正确暴露calculate函数
+      window.calculate = calculate;
+
+      // 将函数定义为全局函数
+      window.toggleSettings = function() {
+        const panel = document.getElementById('settings-panel');
+        panel.classList.toggle('hidden');
+        if (!panel.classList.contains('hidden')) {
+          loadCurrentSettings();
+          // 默认显示基础设置标签
+          switchSettingsTab('defaults');
+        }
+      }
+
+      // 修改 loadCurrentSettings 函数，确保正确加载显示设置
+      window.loadCurrentSettings = function() {
+        // 从本地存储获取所有设置
+        const savedSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+        displaySettings = JSON.parse(localStorage.getItem('displaySettings') || '{}');
+        copySettings = JSON.parse(localStorage.getItem('copySettings') || '{}');
+        
+        currentSettings = { ...DEFAULT_SETTINGS, ...savedSettings };
+        
+        // 加载所有默认值到设置面板
+        document.getElementById('default-boxes').value = currentSettings.boxes;
+        document.getElementById('default-clean-weight').value = currentSettings.cleanWeight;
+        document.getElementById('default-net-weight').value = currentSettings.netWeight;
+        document.getElementById('default-price').value = currentSettings.price;
+        document.getElementById('default-box-cost').value = currentSettings.boxCost;
+        document.getElementById('default-fee').value = currentSettings.fee;
+        document.getElementById('default-mud-labor-fee').value = currentSettings.mudLaborFee;
+        document.getElementById('default-clean-process-fee').value = currentSettings.cleanProcessFee;
+        document.getElementById('default-min-fee').value = currentSettings.minFee;
+        document.getElementById('default-expense-ratio').value = currentSettings.expenseRatio;
+        
+        // 设置显示选项的复选框状态
+        const displayDefaults = {
+          'display-loss-net-purchase': true,
+          'display-loss-gross-purchase': true,
+          'display-loss-actual': true,
+          'display-loss-net-ratio': true,
+          'display-loss-gross-ratio': true,
+          'display-sales-amount': true,
+          'display-sales-total': true,
+          'display-profit-cost': true,
+          'display-profit-expense': true,
+          'display-profit-fee': true,
+          'display-profit-total': true,
+          'display-profit-result': true,
+          'display-profit-ratio': true,
+          'display-formula': false,
+          'display-hint': true,
+          'display-highlight': true,
+          'display-autoscroll': true
+        };
+
+        // 合并默认值和保存的设置
+        Object.keys(displayDefaults).forEach(id => {
+          const checkbox = document.getElementById(id);
+          if (checkbox) {
+            checkbox.checked = displaySettings[id] !== undefined ? displaySettings[id] : displayDefaults[id];
+          }
+        });
+
+        // 设置复制选项的复选框状态
+        const copyDefaults = {
+          'copy-timestamp': true,
+          'copy-type': true,
+          'copy-loss-net-purchase': true,
+          'copy-loss-gross-purchase': true,
+          'copy-loss-actual': true,
+          'copy-loss-net-ratio': true,
+          'copy-loss-gross-ratio': true,
+          'copy-sales-amount': true,
+          'copy-sales-total': true,
+          'copy-profit-cost': true,
+          'copy-profit-expense': true,
+          'copy-profit-fee': true,
+          'copy-profit-total': true,
+          'copy-profit-result': true,
+          'copy-profit-ratio': true
+        };
+
+        // 合并默认值和保存的设置
+        Object.keys(copyDefaults).forEach(id => {
+          const checkbox = document.getElementById(id);
+          if (checkbox) {
+            checkbox.checked = copySettings[id] !== undefined ? copySettings[id] : copyDefaults[id];
+          }
+        });
+
+        // 更新费率显示
+        document.getElementById('current-mud-fee-rate').textContent = currentSettings.mudLaborFee;
+        document.getElementById('current-clean-fee-rate').textContent = currentSettings.cleanProcessFee;
+      }
+
+      // 在 IIFE 中修改 resetDefaults 函数定义
+      window.resetDefaults = function() {
+        localStorage.removeItem('userSettings');
+        localStorage.removeItem('displaySettings');
+        localStorage.removeItem('copySettings');
+        currentSettings = {...DEFAULT_SETTINGS};
+        displaySettings = {};
+        copySettings = {};
+        applySettings();
+        loadCurrentSettings();
+        toggleSettings();
+      }
+
+      function applySettings() {
+        document.getElementById('boxes').value = currentSettings.boxes;
+        document.getElementById('clean-weight').value = currentSettings.cleanWeight;
+        document.getElementById('price').value = currentSettings.price;
+        document.getElementById('box-cost').value = currentSettings.boxCost;
+        document.getElementById('expense-ratio').value = currentSettings.expenseRatio;
+        document.getElementById('fee').value = currentSettings.fee || 1000;
+        
+        // 更新加工费计算逻辑
+        window.MIN_FEE = currentSettings.minFee;
+        
+        saveInputValues();
+        updateUI();
+        calculate();
+        
+        // 更新加工费说明
+        document.querySelectorAll('#current-fee-rate').forEach(el => {
+          el.textContent = currentSettings.processingFee || 110;
+        });
+      }
+
+      // 将 switchSettingsTab 函数定义为全局函数
+      window.switchSettingsTab = function(tabName) {
+        // 更新标签按钮状态
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        document.querySelector(`.tab-btn[onclick*="${tabName}"]`).classList.add('active');
+        
+        // 更新设置区域显示
+        document.querySelectorAll('.settings-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(`${tabName}-settings`).classList.add('active');
+      }
+
+      // 将 saveDefaults 函数定义为全局函数
+      window.saveDefaults = function() {
+        // 保存所有默认值
+        currentSettings.boxes = Number(document.getElementById('default-boxes').value);
+        currentSettings.cleanWeight = Number(document.getElementById('default-clean-weight').value);
+        currentSettings.netWeight = Number(document.getElementById('default-net-weight').value);
+        currentSettings.price = Number(document.getElementById('default-price').value);
+        currentSettings.boxCost = Number(document.getElementById('default-box-cost').value);
+        currentSettings.fee = Number(document.getElementById('default-fee').value);
+        currentSettings.mudLaborFee = Number(document.getElementById('default-mud-labor-fee').value);
+        currentSettings.cleanProcessFee = Number(document.getElementById('default-clean-process-fee').value);
+        currentSettings.minFee = Number(document.getElementById('default-min-fee').value);
+        currentSettings.expenseRatio = Number(document.getElementById('default-expense-ratio').value);
+
+        // 辅助函数：安全获取复选框状态
+        function getCheckboxState(id, defaultValue = true) {
+          const checkbox = document.getElementById(id);
+          return checkbox ? checkbox.checked : defaultValue;
+        }
+
+        // 保存显示设置
+        displaySettings = {
+          'display-loss-net-purchase': getCheckboxState('display-loss-net-purchase'),
+          'display-loss-gross-purchase': getCheckboxState('display-loss-gross-purchase'),
+          'display-loss-actual': getCheckboxState('display-loss-actual'),
+          'display-loss-net-ratio': getCheckboxState('display-loss-net-ratio'),
+          'display-loss-gross-ratio': getCheckboxState('display-loss-gross-ratio'),
+          'display-sales-amount': getCheckboxState('display-sales-amount'),
+          'display-sales-total': getCheckboxState('display-sales-total'),
+          'display-profit-cost': getCheckboxState('display-profit-cost'),
+          'display-profit-expense': getCheckboxState('display-profit-expense'),
+          'display-profit-fee': getCheckboxState('display-profit-fee'),
+          'display-profit-total': getCheckboxState('display-profit-total'),
+          'display-profit-result': getCheckboxState('display-profit-result'),
+          'display-profit-ratio': getCheckboxState('display-profit-ratio'),
+          'display-formula': getCheckboxState('display-formula', false),
+          'display-hint': getCheckboxState('display-hint'),
+          'display-highlight': getCheckboxState('display-highlight'),
+          'display-autoscroll': getCheckboxState('display-autoscroll')
+        };
+
+        // 保存复制设置
+        copySettings = {
+          'copy-timestamp': getCheckboxState('copy-timestamp'),
+          'copy-type': getCheckboxState('copy-type'),
+          'copy-loss-net-purchase': getCheckboxState('copy-loss-net-purchase'),
+          'copy-loss-gross-purchase': getCheckboxState('copy-loss-gross-purchase'),
+          'copy-loss-actual': getCheckboxState('copy-loss-actual'),
+          'copy-loss-net-ratio': getCheckboxState('copy-loss-net-ratio'),
+          'copy-loss-gross-ratio': getCheckboxState('copy-loss-gross-ratio'),
+          'copy-sales-amount': getCheckboxState('copy-sales-amount'),
+          'copy-sales-total': getCheckboxState('copy-sales-total'),
+          'copy-profit-cost': getCheckboxState('copy-profit-cost'),
+          'copy-profit-expense': getCheckboxState('copy-profit-expense'),
+          'copy-profit-fee': getCheckboxState('copy-profit-fee'),
+          'copy-profit-total': getCheckboxState('copy-profit-total'),
+          'copy-profit-result': getCheckboxState('copy-profit-result'),
+          'copy-profit-ratio': getCheckboxState('copy-profit-ratio')
+        };
+
+        // 保存所有设置到本地存储
+        localStorage.setItem('userSettings', JSON.stringify(currentSettings));
+        localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
+        localStorage.setItem('copySettings', JSON.stringify(copySettings));
+
+        applySettings();
+        toggleSettings();
+      }
+
+      // 在 IIFE 中添加 updateResultVisibility 函数定义
+      // 根据显示选项控制结果显示
+      window.updateResultVisibility = function() {
+        const resultSections = document.querySelectorAll('.result-section');
+        
+        // 损耗分析部分
+        const lossSection = resultSections[0];
+        if (lossSection) {
+          const lossItems = lossSection.querySelectorAll('.result-item');
+          lossItems.forEach(item => {
+            const text = item.querySelector('strong').textContent;
+            item.style.display = 'block';
+            if (text.includes('净重采购量') && !document.getElementById('display-loss-net-purchase').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('毛重采购量') && !document.getElementById('display-loss-gross-purchase').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('实际出货量') && !document.getElementById('display-loss-actual').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('净重损耗比例') && !document.getElementById('display-loss-net-ratio').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('毛重损耗比例') && !document.getElementById('display-loss-gross-ratio').checked) {
+              item.style.display = 'none';
+            }
+          });
+        }
+        
+        // 销售结果部分
+        const salesSection = resultSections[1];
+        if (salesSection) {
+          const salesItems = salesSection.querySelectorAll('.result-item');
+          salesItems.forEach(item => {
+            const text = item.querySelector('strong').textContent;
+            item.style.display = 'block';
+            if (text.includes('销售总额') && !document.getElementById('display-sales-total').checked) {
+              item.style.display = 'none';
+            }
+          });
+        }
+        
+        // 利润分析部分
+        const profitSection = resultSections[2];
+        if (profitSection) {
+          const profitItems = profitSection.querySelectorAll('.result-item');
+          profitItems.forEach(item => {
+            const text = item.querySelector('strong').textContent;
+            item.style.display = 'block';
+            if (text.includes('采购成本') && !document.getElementById('display-profit-cost').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('其他支出') && !document.getElementById('display-profit-expense').checked) {
+              item.style.display = 'none';
+            }
+            if ((text.includes('加工费用') || text.includes('人工费用')) && !document.getElementById('display-profit-fee').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('总成本') && !document.getElementById('display-profit-total').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('预估利润') && !document.getElementById('display-profit-result').checked) {
+              item.style.display = 'none';
+            }
+            if (text.includes('利润率') && !document.getElementById('display-profit-ratio').checked) {
+              item.style.display = 'none';
+            }
+          });
+        }
+      }
+
+      // 在 IIFE 中添加 copyResults 函数定义
+      window.copyResults = function() {
+      // 获取当前日期
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+        let copyText = '';
+        
+        // 添加时间戳
+        if (document.getElementById('copy-timestamp').checked) {
+          copyText += `${dateStr}\n\n`;
+        }
+        
+        // 获取计算类型
+        if (document.getElementById('copy-type').checked) {
+          const calcType = document.getElementById('calculation-type').value;
+          const typeText = {
+            'loss': '损耗分析',
+            'sales': '销售总价',
+            'profit': '利润核算'
+          }[calcType];
+          copyText += `${typeText}\n\n`;
+        }
+        
+        // 用于跟踪已复制的内容，避免重复
+        const copiedContents = new Set();
+        
+        // 获取所有结果项并处理
+        const resultSections = document.querySelectorAll('.result-section');
+        resultSections.forEach(section => {
+          const items = section.querySelectorAll('.result-item');
+          items.forEach(item => {
+            const titleEl = item.querySelector('strong');
+            if (!titleEl) return;
+            
+            const title = titleEl.textContent;
+            // 获取值（直接获取strong标签后面的文本节点）
+            let value = '';
+            let node = titleEl.nextSibling;
+            while (node && node.nodeType === 3) { // 文本节点
+              value += node.textContent;
+              node = node.nextSibling;
+            }
+            value = value.trim();
+            
+            // 根据标题和复选框状态决定是否复制
+            const shouldCopy = (
+              (title.includes('净重采购量') && document.getElementById('copy-loss-net-purchase').checked) ||
+              (title.includes('毛重采购量') && document.getElementById('copy-loss-gross-purchase').checked) ||
+              (title.includes('实际出货量') && document.getElementById('copy-loss-actual').checked) ||
+              (title.includes('净重损耗比例') && document.getElementById('copy-loss-net-ratio').checked) ||
+              (title.includes('毛重损耗比例') && document.getElementById('copy-loss-gross-ratio').checked) ||
+              (title.includes('销售总额') && document.getElementById('copy-sales-total').checked) ||
+              (title.includes('采购成本') && document.getElementById('copy-profit-cost').checked) ||
+              (title.includes('其他支出') && document.getElementById('copy-profit-expense').checked) ||
+              ((title.includes('加工费用') || title.includes('人工费用')) && document.getElementById('copy-profit-fee').checked) ||
+              (title.includes('总成本') && document.getElementById('copy-profit-total').checked) ||
+              (title.includes('预估利润') && document.getElementById('copy-profit-result').checked) ||
+              (title.includes('利润率') && document.getElementById('copy-profit-ratio').checked)
+            );
+            
+            // 只在内容未被复制过且应该复制时添加
+            const content = `${title}${value}`;
+            if (shouldCopy && value && !copiedContents.has(content)) {
+              copyText += `${content}\n`;
+              copiedContents.add(content);
+            }
+          });
+        });
+        
+        // 去除多余空行并整理格式
+        copyText = copyText.replace(/\n{3,}/g, '\n\n').trim();
+        
+        // 复制到剪贴板
+        navigator.clipboard.writeText(copyText).then(() => {
+        // 显示成功提示
+        const tip = document.createElement('div');
+        tip.className = 'copy-success';
+        tip.textContent = '✓ 复制成功！';
+        document.body.appendChild(tip);
+        
+        // 2秒后移除提示
+        setTimeout(() => tip.remove(), 1500);
+
+        // 恢复按钮状态
+        setTimeout(() => {
+          document.getElementById('copy-btn').style.display = 'none';
+          document.getElementById('calculate-btn').style.width = '100%';
+        }, 3000);
+      }).catch(err => {
+        alert('复制失败，请手动选择内容复制');
+      });
+      }
+
+      // 保留这个函数作为唯一的历史记录保存方法
+      window.saveCalculationHistory = function() {
+        const calcType = inputStates["calculation-type"];
+        const resultHTML = document.getElementById('result-content').innerHTML;
+        
+        // 获取当前输入值
+        const inputValues = {
+          boxes: document.getElementById('boxes').value,
+          'processed-boxes': document.getElementById('processed-boxes').value,
+          'clean-weight': document.getElementById('clean-weight').value,
+          price: document.getElementById('price').value,
+          fee: document.getElementById('fee').value,
+          'box-cost': document.getElementById('box-cost').value,
+          'expense-ratio': document.getElementById('expense-ratio').value,
+          'sale-type': document.querySelector('input[name="sale-type"]:checked').value,
+        };
+        
+        // 生成输入值的HTML
+        const inputsHTML = `
+          <div class="inputs-summary">
+            <strong>输入参数：</strong><br>
+            ${inputValues['sale-type'] === 'mud' ? '泥姜' : '洗姜'} | 
+            出货箱数: ${inputValues.boxes} | 
+            实际出货件数: ${inputValues['processed-boxes']} | 
+            ${inputValues['sale-type'] === 'clean' ? `洗姜重量: ${inputValues['clean-weight']} | ` : ''}
+            单价: ${inputValues.price} | 
+            ${inputValues['sale-type'] === 'mud' ? '人工费用' : '加工费用'}: ${inputValues.fee} | 
+            箱子成本: ${inputValues['box-cost']} | 
+            其他支出比例: ${inputValues['expense-ratio']}%
+          </div>
+        `;
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = resultHTML;
+        
+        // 移除所有计算公式
+        tempDiv.querySelectorAll('.formula-hint').forEach(el => el.remove());
+        
+        // 将输入值添加到结果HTML的开头
+        tempDiv.insertAdjacentHTML('afterbegin', inputsHTML);
+        
+        // 获取处理后的 HTML
+        const cleanResult = tempDiv.innerHTML;
+        
+        // 获取现有历史记录
+        const historyRecords = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+        
+        // 添加新记录
+        historyRecords.unshift({
+          id: Date.now().toString(),
+          timestamp: new Date().toISOString(),
+          type: calcType,
+          result: cleanResult,
+          inputValues,
+          note: ''
+        });
+        
+        localStorage.setItem('calculationHistory', JSON.stringify(historyRecords));
+      }
+    })();
+
+    // 将 switchSettingsTab 函数移到 IIFE 外部
+    window.switchSettingsTab = function(tabName) {
+      // 更新标签按钮状态
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`.tab-btn[onclick*="${tabName}"]`).classList.add('active');
+      
+      // 更新设置区域显示
+      document.querySelectorAll('.settings-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(`${tabName}-settings`).classList.add('active');
+    }
+  </script>
+</body>
+</html>

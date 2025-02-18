@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生姜经营计算系统</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+    .input-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      color: #34495e;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .explanation {
+      margin: 15px 0;
+      padding: 15px;
+      background: #ecf0f1;
+      border-radius: 6px;
+      color: #7f8c8d;
+    }
+    .result {
+      margin-top: 30px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .result-item {
+      margin: 12px 0;
+      padding: 12px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .hidden {
+      display: none;
+    }
+    .weight-input {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>生姜经营计算系统</h1>
+    
+    <div class="input-section">
+      <label>计算模式选择</label>
+      <select id="calculation-type">
+        <option value="loss">损耗分析</option>
+        <option value="sales">销售总价</option>
+        <option value="profit">利润核算</option>
+      </select>
+
+      <div class="explanation">
+        <p>模式说明：</p>
+        <ul>
+          <li>损耗分析：计算采购到销售的损耗比例</li>
+          <li>销售总价：计算预期销售总额</li>
+          <li>利润核算：计算最终经营利润</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 公共输入区域 -->
+    <div class="input-section">
+      <label>销售类型选择</label>
+      <div>
+        <label>
+          <input type="radio" name="sale-type" value="mud" checked> 泥姜
+        </label>
+        <label>
+          <input type="radio" name="sale-type" value="clean"> 洗姜
+        </label>
+      </div>
+
+      <div class="explanation">
+        <div id="mud-desc" class="hidden">
+          <p>泥姜说明：带包装销售，每件毛重按50斤计算（含包装）</p>
+        </div>
+        <div id="clean-desc" class="hidden">
+          <p>洗姜说明：净重销售，销售时按加工后打包重量计算</p>
+        </div>
+      </div>
+
+      <label>出库箱数</label>
+      <input type="number" id="boxes" step="1" placeholder="输入出库总箱数">
+    </div>
+
+    <!-- 损耗分析输入 -->
+    <div id="loss-inputs" class="input-section">
+      <div id="clean-weight-input" class="weight-input hidden">
+        <label>洗姜每件重量（斤）</label>
+        <input type="number" id="clean-weight" step="0.01" placeholder="输入洗姜每件重量">
+      </div>
+
+      <label>实际出货件数</label>
+      <input type="number" id="processed-boxes" step="1">
+    </div>
+
+    <!-- 销售总价输入 -->
+    <div id="sales-inputs" class="input-section hidden">
+      <div id="sales-weight-input" class="weight-input hidden">
+        <label>洗姜每件重量（斤）</label>
+        <input type="number" id="sales-weight" step="0.01" placeholder="输入洗姜每件重量">
+      </div>
+
+      <label>实际出货件数</label>
+      <input type="number" id="sales-processed-boxes" step="1">
+
+      <label>销售单价（元/斤）</label>
+      <input type="number" id="price" step="0.01">
+    </div>
+
+    <!-- 利润核算输入 -->
+    <div id="profit-inputs" class="input-section hidden">
+      <label>每箱采购价格（元）</label>
+      <input type="number" id="box-cost" value="141" step="0.01">
+      
+      <label>加工费用（元）</label>
+      <input type="number" id="fee" step="0.01">
+      
+      <label>其他支出占比</label>
+      <input type="number" id="expense-ratio" value="9.24" step="0.01">
+    </div>
+
+    <button onclick="calculate()">开始计算</button>
+
+    <div class="result hidden" id="result-area">
+      <h3>计算结果</h3>
+      <div id="result-content"></div>
+    </div>
+  </div>
+
+  <script>
+    // 单位转换常量
+    const JIN_TO_TON = 2000; // 1吨=2000斤
+
+    // 动态显示说明和输入字段
+    function updateUI() {
+      const saleType = document.querySelector('input[name="sale-type"]:checked').value;
+      const isClean = saleType === 'clean';
+
+      // 更新说明
+      document.getElementById('mud-desc').classList.toggle('hidden', isClean);
+      document.getElementById('clean-desc').classList.toggle('hidden', !isClean);
+
+      // 更新重量输入字段
+      document.querySelectorAll('[id$="-weight-input"]').forEach(el => {
+        el.classList.toggle('hidden', !isClean);
+      });
+    }
+
+    // 动态显示输入区域
+    document.getElementById('calculation-type').addEventListener('change', function() {
+      const type = this.value;
+      document.querySelectorAll('.input-section:not(.explanation)').forEach(el => {
+        if(el.id && el.id.endsWith('-inputs')) el.classList.add('hidden');
+      });
+      document.getElementById(`${type}-inputs`).classList.remove('hidden');
+      updateUI();
+    });
+
+    // 销售类型变更监听
+    document.querySelectorAll('input[name="sale-type"]').forEach(radio => {
+      radio.addEventListener('change', updateUI);
+    });
+
+    // 核心计算逻辑
+    function calculate() {
+      // 获取基础参数
+      const calcType = document.getElementById('calculation-type').value;
+      const isMud = document.querySelector('input[name="sale-type"]:checked').value === 'mud';
+      const boxes = parseFloat(document.getElementById('boxes').value);
+      
+      // 重量计算逻辑
+      const mudWeight = 50;  // 泥姜每件重量
+      const cleanWeight = isMud ? 0 : parseFloat(
+        calcType === 'sales' ? 
+          document.getElementById('sales-weight').value :
+          document.getElementById('clean-weight').value
+      );
+      const unitWeight = isMud ? mudWeight : cleanWeight;
+      const totalPurchaseTon = (boxes * 47.04) / JIN_TO_TON;  // 采购吨数
+
+      let resultHTML = '';
+      
+      switch(calcType) {
+        case 'loss':
+          const processed = parseFloat(document.getElementById('processed-boxes').value);
+          const actualTon = (processed * unitWeight) / JIN_TO_TON;
+          const loss = ((totalPurchaseTon - actualTon)/totalPurchaseTon * 100).toFixed(2);
+          resultHTML = `
+            <div class="result-item">
+              <strong>理论采购量：</strong>${totalPurchaseTon.toFixed(3)}吨
+            </div>
+            <div class="result-item">
+              <strong>实际出货量：</strong>${actualTon.toFixed(3)}吨
+            </div>
+            <div class="result-item highlight">
+              <strong>损耗比例：</strong>${loss}%
+            </div>
+          `;
+          break;
+
+        case 'sales':
+          const price = parseFloat(document.getElementById('price').value);
+          const salesProcessedBoxes = parseFloat(document.getElementById('sales-processed-boxes').value);
+          const sales = (unitWeight * salesProcessedBoxes * price).toFixed(2);
+          resultHTML = `
+            <div class="result-item">
+              <strong>销售总量：</strong>${(unitWeight * salesProcessedBoxes / JIN_TO_TON).toFixed(3)}吨
+            </div>
+            <div class="result-item highlight">
+              <strong>销售总额：</strong>¥${sales}
+            </div>
+          `;
+          break;
+
+        case 'profit':
+          const boxCost = parseFloat(document.getElementById('box-cost').value);
+          const fee = parseFloat(document.getElementById('fee').value);
+          const ratio = parseFloat(document.getElementById('expense-ratio').value)/100;
+
+          const purchaseCost = boxes * boxCost;
+          const totalCost = purchaseCost/(1 - ratio) + fee;
+          const revenue = unitWeight * parseFloat(document.getElementById('processed-boxes').value) * (boxCost / 47.04);  // 按箱价换算单价
+
+          const profit = (revenue - totalCost).toFixed(2);
+          resultHTML = `
+            <div class="result-item">
+              <strong>采购成本：</strong>¥${purchaseCost.toFixed(2)}
+            </div>
+            <div class="result-item">
+              <strong>附加成本：</strong>¥${(totalCost - purchaseCost - fee).toFixed(2)}
+            </div>
+            <div class="result-item highlight">
+              <strong>预估利润：</strong>¥${profit}
+            </div>
+          `;
+          break;
+      }
+
+      document.getElementById('result-content').innerHTML = resultHTML;
+      document.getElementById('result-area').classList.remove('hidden');
+      updateUI();
+    }
+
+    // 初始化
+    updateUI();
+  </script>
+</body>
+</html>
